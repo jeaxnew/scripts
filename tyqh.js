@@ -37,7 +37,7 @@ const Notify = 1; //0为关闭通知，1为打开通知,默认为1
 const debug = 0; //0为关闭调试，1为打开调试,默认为0
 const uaNum = 1; //随机UA，从0-20随便选一个填上去
 //////////////////////
-let scriptVersion = "1.6.3";
+let scriptVersion = "1.6.4";
 let scriptVersionLatest = '';
 let tyau = "";
 let tybody = ($.isNode() ? process.env.tybody : $.getdata("tybody")) || "";
@@ -1521,7 +1521,7 @@ function poem(timeout = 3 * 1000) {
  * qq: 505088318
  */
 function s(e) {
-    let prod = {clientKey: "IfWu0xwXlWgqkIC7DWn20qpo6a30hXX6", clientSecret: "A4rHhUJfMjw2I5CODh5g40Ja1d3Yk1CH"},t = {clientKey: prod.clientKey, clientSecret: prod.clientSecret, timestamp: Date.now(), nonce: randomString()},o = g(t)
+    let prod = {clientKey: "IfWu0xwXlWgqkIC7DWn20qpo6a30hXX6", clientSecret: "A4rHhUJfMjw2I5CODh5g40Ja1d3Yk1CH"},t = {clientKey: prod.clientKey, clientSecret: prod.clientSecret, timestamp: Date.now(), nonce: r()},o = g(t)
     t.signature = md5.update(o).digest('hex').toUpperCase()
     return {
         url: (e + (-1 !== e.indexOf("?") ? e.indexOf("?") === e.length - 1 ? "" : e.endsWith("&") ? "" : "&" : "?") + "timestamp=" + t.timestamp + "&nonce=" + t.nonce + "&signature=" + t.signature).replace(/&&/g, "&"),
