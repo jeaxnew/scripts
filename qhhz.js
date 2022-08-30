@@ -1,6 +1,10 @@
+const crypto = require("crypto");
 /**
- 作者：临渊
- 日期：6-12
+ * author: 临渊&小蒋同学এ修复
+ * qq: 505088318
+ * update: 2022-08-30
+
+
  小程序：统一快乐星球
  入口：活动->种番茄
  功能：互助
@@ -9,12 +13,13 @@
  定时两个小时一次
  cron: 5 0/2 * * *
 
- 6-14 更新了AU获取方式，理论上不会过期了
- 6-18 更新了收取植物、种新的植物和推送加上昵称，方便辨认（可能）
- 6-22 修复了上报挑战失败、洒阳光失败，更新了种植进度（免得老有人说脚本坏了）
- 6-23 更新了助力、助力洒阳光
- 6-25 更新了冒险助力
- 6-26 修复了冒险助力的小bug，建议更改定时两个小时一次
+ 2022-08-30 小蒋同学修复
+ 2022-06-14 更新了AU获取方式，理论上不会过期了
+ 2022-06-18 更新了收取植物、种新的植物和推送加上昵称，方便辨认（可能）
+ 2022-06-22 修复了上报挑战失败、洒阳光失败，更新了种植进度（免得老有人说脚本坏了）
+ 2022-06-23 更新了助力、助力洒阳光
+ 2022-06-25 更新了冒险助力
+ 2022-06-26 修复了冒险助力的小bug，建议更改定时两个小时一次
  */
 
 const $ = new Env('统一茄皇互助');
@@ -193,7 +198,7 @@ function refreshAu(num) {
  */
 function getTask(timeout = 2*1000) {
     let url = {
-        url : `http://api.xiaoyisz.com/qiehuang/ga/user/task/list`,
+        url : s(`http://api.xiaoyisz.com/qiehuang/ga/user/task/list`),
         headers : {
             "Host": "api.xiaoyisz.com",
             "authorization": `${tyau}`,
@@ -250,7 +255,7 @@ function getTask(timeout = 2*1000) {
  */
 function getPlant(num) {
     let url = {
-        url : `http://api.xiaoyisz.com/qiehuang/ga/plant/info?userId=-1`,
+        url : s(`http://api.xiaoyisz.com/qiehuang/ga/plant/info?userId=-1`),
         headers : {
             "Host": "api.xiaoyisz.com",
             "authorization": `${tyau}`,
@@ -297,7 +302,7 @@ function getPlant(num) {
  */
 function getTomato(timeout = 2*1000) {
     let url = {
-        url : `http://api.xiaoyisz.com/qiehuang/ga/user/info?userId=-1`,
+        url : s(`http://api.xiaoyisz.com/qiehuang/ga/user/info?userId=-1`),
         headers : {
             "Host": "api.xiaoyisz.com",
             "authorization": `${tyau}`,
@@ -348,7 +353,7 @@ function getTomato(timeout = 2*1000) {
  */
 function getUserInfo(timeout = 2*1000) {
     let url = {
-        url : `http://api.xiaoyisz.com/qiehuang/ga/user/info?userId=-1`,
+        url : s(`http://api.xiaoyisz.com/qiehuang/ga/user/info?userId=-1`),
         headers : {
             "Host": "api.xiaoyisz.com",
             "authorization": `${tyau}`,
@@ -393,7 +398,7 @@ function getUserInfo(timeout = 2*1000) {
  */
 function doHelp(num1,num2) {
     let url = {
-        url : `http://api.xiaoyisz.com/qiehuang/ga/user/task/report?taskType=${taskTypeArr[0]}&attachId=${idArr[num2]}&taskId=${helpTaskIdArr[num1]}`,
+        url : s(`http://api.xiaoyisz.com/qiehuang/ga/user/task/report?taskType=${taskTypeArr[0]}&attachId=${idArr[num2]}&taskId=${helpTaskIdArr[num1]}`),
         headers : {
             "Host": "api.xiaoyisz.com",
             "authorization": `${newAuArr[num1]}`,
@@ -452,7 +457,7 @@ function doHelp(num1,num2) {
  */
 function doHelpGiveSunshine(num1,num2) {
     let url = {
-        url : `http://api.xiaoyisz.com/qiehuang/ga/plant/giveSunshine?plantId=${plantIdArr[num2]}`,
+        url : s(`http://api.xiaoyisz.com/qiehuang/ga/plant/giveSunshine?plantId=${plantIdArr[num2]}`),
         headers : {
             "Host": "api.xiaoyisz.com",
             "authorization": `${newAuArr[num1]}`,
@@ -506,7 +511,7 @@ function doHelpGiveSunshine(num1,num2) {
  */
 function doHelpAdventure(num1,num2) {
     let url = {
-        url : `http://api.xiaoyisz.com/qiehuang/ga/user/adventure/help?adventureId=${helpAdventureIdArr[num2]}`,
+        url : s(`http://api.xiaoyisz.com/qiehuang/ga/user/adventure/help?adventureId=${helpAdventureIdArr[num2]}`),
         headers : {
             "Host": "api.xiaoyisz.com",
             "authorization": `${newAuArr[num1]}`,
@@ -555,7 +560,7 @@ function doHelpAdventure(num1,num2) {
  */
 function queryAdventure(timeout = 2*1000) {
     let url = {
-        url : `http://api.xiaoyisz.com/qiehuang/ga/user/adventure/info?userId=-1&type=2`,
+        url : s(`http://api.xiaoyisz.com/qiehuang/ga/user/adventure/info?userId=-1&type=2`),
         headers : {
             "Host": "api.xiaoyisz.com",
             "authorization": `${tyau}`,
@@ -610,7 +615,7 @@ function queryAdventure(timeout = 2*1000) {
  */
 function reportAdventure(timeout = 2*1000) {
     let url = {
-        url : `http://api.xiaoyisz.com/qiehuang/ga/user/adventure/drawPrize?adventureId=${adventureId}`,
+        url : s(`http://api.xiaoyisz.com/qiehuang/ga/user/adventure/drawPrize?adventureId=${adventureId}`),
         headers : {
             "Host": "api.xiaoyisz.com",
             "authorization": `${tyau}`,
@@ -669,7 +674,7 @@ function reportAdventure(timeout = 2*1000) {
  */
 function startAdventure(num) {
     let url = {
-        url : `http://api.xiaoyisz.com/qiehuang/ga/user/adventure/start`,
+        url : s(`http://api.xiaoyisz.com/qiehuang/ga/user/adventure/start`),
         headers : {
             "Host": "api.xiaoyisz.com",
             "authorization": `${newAuArr[num]}`,
@@ -803,6 +808,40 @@ function poem(timeout = 3 * 1000) {
             }
         }, timeout)
     })
+}
+
+/**
+ * 时间戳随机数密钥签名校验
+ * author: 小蒋同学
+ * qq: 505088318
+ */
+function s(e) {
+    const crypto = require('crypto')
+    const md5 = crypto.createHash('md5')
+    let prod = {clientKey: "IfWu0xwXlWgqkIC7DWn20qpo6a30hXX6", clientSecret: "A4rHhUJfMjw2I5CODh5g40Ja1d3Yk1CH"},t = {clientKey: prod.clientKey, clientSecret: prod.clientSecret, timestamp: Date.now(), nonce: r()},o = g(t)
+    t.signature = md5.update(o).digest('hex').toUpperCase()
+    return (e + (-1 !== e.indexOf("?") ? e.indexOf("?") === e.length - 1 ? "" : e.endsWith("&") ? "" : "&" : "?") + "timestamp=" + t.timestamp + "&nonce=" + t.nonce + "&signature=" + t.signature).replace(/&&/g, "&")
+}
+
+function g(t) {
+    var e = Object.keys(t).sort()
+        , n = "";
+    return e.forEach(function(e) {
+        if (t[e] || 0 === t[e]) {
+            var o;
+            o = t[e]instanceof Object ? e + "=" + JSON.stringify(t[e]) : e + "=" + t[e],
+            n && o && (n += "&"),
+                n += o
+        }
+    }),
+        n
+}
+
+function r(e) {
+    void 0 === e && (e = 16);
+    for (var t = "ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678", n = t.length, a = "", r = 0; r < e; r++)
+        a += t.charAt(Math.floor(Math.random() * n));
+    return a
 }
 
 /**
