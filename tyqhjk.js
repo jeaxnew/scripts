@@ -17,7 +17,7 @@
  #统一茄皇jk
  * * * * *  https://raw.githubusercontent.com/jeaxnew/scripts/main/tyqhjk.js, tag=统一茄皇jk, enabled=true
  [rewrite_local]
- http://api.xiaoyisz.com/qiehuang/ga/public/api/login url script-request-header https://raw.githubusercontent.com/jeaxnew/scripts/main/tyqhjk.js
+ https://apig.xiaoyisz.com/qiehuang/ga/public/api/login url script-request-header https://raw.githubusercontent.com/jeaxnew/scripts/main/tyqhjk.js
  [MITM]
  hostname = api.xiaoyisz.com
 
@@ -148,9 +148,9 @@ let ua = User_Agents[uaNum];
  */
 function refreshAu(timeout = 2 * 1000) {
     let url = {
-        url: `http://api.xiaoyisz.com/qiehuang/ga/public/api/login`,
+        url: `https://apig.xiaoyisz.com/qiehuang/ga/public/api/login`,
         headers: {
-            Host: "api.xiaoyisz.com",
+            Host: "apig.xiaoyisz.com",
             "user-agent": `${ua}`,
             "Content-Type": "application/json",
         },
@@ -203,9 +203,9 @@ function refreshAu(timeout = 2 * 1000) {
  */
 function getTask(timeout = 2 * 1000) {
     let url = {
-        url: s(`http://api.xiaoyisz.com/qiehuang/ga/user/gift/list`),
+        url: s(`https://apig.xiaoyisz.com/qiehuang/ga/user/gift/list`),
         headers: {
-            Host: "api.xiaoyisz.com",
+            Host: "apig.xiaoyisz.com",
             authorization: `${tyau}`,
             "user-agent": `${ua}`,
             "content-type": "application/json",
