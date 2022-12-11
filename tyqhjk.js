@@ -152,59 +152,8 @@ let ua = User_Agents[uaNum];
                 helpTaskIdArr[index] = helpTaskId;
 
                 if (auback != 1) {
-                    for (let i = 0; i < 10; i++) {
-                        if (taskBack[i]) {
-                            if (i == 0) {
-                                log(`\n助力任务还未完成，建议执行互助\n`);
-                            } else
-                                log(`【第${i + 1}个任务未完成，开始执行第${i + 1}个任务】`);
-                            await report(i);
-                            if (i == 2) {
-                                await report(i);
-                                await report(i);
-                                await report(i);
-                                await report(i);
-                            }
-                            await $.wait(2 * 1000);
-                            await getDrawPriz(i);
-                            await $.wait(2 * 1000);
-                        }
-                    }
-
-                    log("【开始收取阳光】");
-                    await getSunshine();
-                    await $.wait(2 * 1000);
-
-                    log("【开始进行挑战】");
-                    await startCallenge();
-                    await $.wait(2 * 1000);
-
-                    log("【开始查询冒险奖励】");
-                    await queryAdventure();
-                    await $.wait(2 * 1000);
-
-                    log("【开始获取植物详情】");
-                    await getPlant(index);
-                    await $.wait(2 * 1000);
-                    plantIdArr[index] = tyPlantId;
-
-                    log("【开始洒阳光】");
-                    do {
-                        await giveSunshine();
-                        await $.wait(2 * 1000);
-                    } while (giveSunshineBack == 1);
-
-                    log("【开始获取植物详情】");
-                    await getPlant(index);
-                    await $.wait(2 * 1000);
-                    plantIdArr[index] = tyPlantId;
-
-                    log("【开始偷好友阳光】");
-                    const stealAll = await stealFriendSunshine();
-                    msg += `\n共偷取好友阳光${stealAll}g`;
-
                     log("【开始查询信息】");
-                    await getUserInfo();
+                    await ();
                     await $.wait(2 * 1000);
 
                     idArr[index] = id;
@@ -1244,7 +1193,7 @@ function getNewPlant(timeout = 2 * 1000) {
  */
 function getUserInfo(timeout = 2 * 1000) {
     let url = {
-        url: s(`http://api.xiaoyisz.com/qiehuang/ga/user/info?userId=-1`),
+        url: s(`http://api.xiaoyisz.com/qiehuang/ga/user/gift/list`),
         headers: {
             Host: "api.xiaoyisz.com",
             authorization: `${tyau}`,
@@ -1275,10 +1224,13 @@ function getUserInfo(timeout = 2 * 1000) {
                         refreshAu();
                     }
                     if (result.code == 0) {
-                        name = back.nickName;
-                        id = back.id;
-                        await $.wait(2 * 1000);
-                        getTomato();
+result.data.forEach(function(v, i, a){
+if (v.id != '1525520477702881280' && v.id != '1525520477719658496'){
+if (v.leftStock > 0){
+msg += `\n账号[${name}]，商品名称：${v.name}，库存：${v.leftStock}`;
+}
+}
+});
                     } else log(`获取信息失败，原因是：${result.message}`);
                 } catch (e) {
                     log(e);
