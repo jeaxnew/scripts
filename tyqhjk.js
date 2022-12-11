@@ -101,21 +101,6 @@ let ua = User_Agents[uaNum];
     } else {
         if (!(await Envs())) return;
         else {
-            log(
-                `\n\n=============================================    \n脚本执行 - 北京时间(UTC+8)：${new Date(
-                    new Date().getTime() +
-                    new Date().getTimezoneOffset() * 60 * 1000 +
-                    8 * 60 * 60 * 1000
-                ).toLocaleString()} \n=============================================\n`
-            );
-
-            await poem();
-            await getVersion();
-            log(`\n============ 当前版本：${scriptVersion}  最新版本：${scriptVersionLatest} ============`)
-            log(
-                `\n=================== 共找到 ${tybodyArr.length} 个账号 ===================`
-            );
-
             if (debug) {
                 log(`【debug】 这是你的全部账号数组:\n ${tybodyArr}`);
             }
@@ -149,15 +134,7 @@ let ua = User_Agents[uaNum];
                 log("【开始查询任务】");
                 await getTask();
                 await $.wait(2 * 1000);
-                helpTaskIdArr[index] = helpTaskId;
-
-                if (auback != 1) {
-                    log("【开始查询信息】");
-                    await getUserInfo();
-                    await $.wait(2 * 1000);
-
-                    idArr[index] = id;
-                }
+                
             }
             await SendMsg(msg);
         }
@@ -219,255 +196,14 @@ function refreshAu(timeout = 2 * 1000) {
     });
 }
 
-/**
- * 偷朋友阳光
- */
-async function stealFriendSunshine(timeout = 2 * 1000) {
-    //--0 先获取好友列表
-    let url = {
-        url: s(`http://api.xiaoyisz.com/qiehuang/ga/user/friend/list?page=1&size=50`),
-        headers: {
-            Host: "api.xiaoyisz.com",
-            authorization: `${tyau}`,
-            "user-agent": `${ua}`,
-            "Content-Type": "application/json",
-        },
-    };
-    return new Promise(async (resolve) => {
-        if (debug) {
-            log(`\n【debug】=============== 这是 朋友列表 请求 url ===============`);
-            log(JSON.stringify(url));
-        }
 
-        $.get(
-            url,
-            async (error, response, data) => {
-                try {
-                    if (debug) {
-                        log(
-                            `\n\n【debug】===============这是 朋友列表 返回data==============`
-                        );
-                        log(data);
-                    }
-
-                    let result = JSON.parse(data);
-                    if (result.code == 904) {
-                        refreshAu();
-                    } else if (result.code === 0) {
-                        const {
-                            data: { content },
-                        } = result;
-                        if (content.length > 0) {
-                            //--1 过滤可偷好友列表
-                            const stealList = content.filter((it) => it.stealAble);
-                            log("可偷好友列表为", stealList.length);
-                            if (stealList.length > 0) {
-                                //--2 偷 然后汇总偷取的阳光
-                                const stealNums = await stealList.reduce(async (pre, curt) => {
-                                    // 这里是关键，需要 await 前一个 task 执行的结果
-                                    // 实际上每个 reduce 每个循环执行都相当于 new Promise
-                                    // 但第二次执行可以拿到上一次执行的结果，也就是上一个 Promise
-                                    // 每次执行只要 await 上一个 Promise，即可实现依次执行
-                                    const prev = await pre;
-                                    if (stealFull) {
-                                        console.log("最多偷取10人，不再偷取");
-                                        return prev;
-                                    } else {
-                                        const next = await stealSunshine(curt.userId);
-                                        await $.wait(2 * 1000);
-                                        return prev + next;
-                                    }
-                                }, 0);
-                                console.log("偷取的数据", stealNums);
-
-                                resolve(stealNums);
-                            } else resolve(0);
-                        } else {
-                            log(`没有好友，退出`);
-                            resolve(0);
-                        }
-                    } else {
-                        log(`遇到错误，原因是：${result.message}`);
-                        resolve(0);
-                    }
-                } catch (e) {
-                    log(e);
-                } finally {
-                    resolve(0);
-                }
-            },
-            timeout
-        );
-    });
-}
-/**
- * 偷好友阳光
- */
-function stealSunshine(userId, timeout = 2 * 1000) {
-    return new Promise((resolve) => {
-        let url = {
-            url: s(`http://api.xiaoyisz.com/qiehuang/ga/user/daily/steal?friendUserId=` + userId),
-            headers: {
-                Host: "api.xiaoyisz.com",
-                authorization: `${tyau}`,
-                "user-agent": `${ua}`,
-                "Content-Type": "application/json",
-            },
-        };
-        if (debug) {
-            log(
-                `\n【debug】=============== 这是 偷好友阳光 请求 url ===============`
-            );
-            log(JSON.stringify(url));
-        }
-
-        $.get(
-            url,
-            async (error, response, data) => {
-                try {
-                    if (debug) {
-                        log(
-                            `\n\n【debug】===============这是 偷好友阳光 返回data==============`
-                        );
-                        log(data);
-                    }
-
-                    let result = JSON.parse(data);
-                    if (result.code == 904) {
-                        refreshAu();
-                    } else if (result.code === 0) {
-                        const { data: stealData } = result;
-                        if (stealData > 0) {
-                            log(`偷到好友阳光 ${stealData}g`);
-                            return resolve(stealData);
-                        } else return resolve(0);
-                    } else {
-                        log(`遇到错误，原因是：${JSON.stringify(result)}`);
-                        stealFull = true;
-                        resolve(0);
-                    }
-                } catch (e) {
-                    log(e);
-                    stealFull = true;
-                    resolve(0);
-                }
-            },
-            timeout
-        );
-    });
-}
-
-/**
- * 上报任务
- */
-function report(num) {
-    let url = {
-        url: s(`http://api.xiaoyisz.com/qiehuang/ga/user/task/report?taskType=${taskTypeArr[num]}&attachId=${timestampMs()}&taskId=${taskIdArr[num]}`),
-        headers: {
-            Host: "api.xiaoyisz.com",
-            authorization: `${tyau}`,
-            "user-agent": `${ua}`,
-            "content-type": "application/json",
-        },
-    };
-    return new Promise((resolve) => {
-        if (debug) {
-            log(`\n【debug】=============== 这是 上报任务 请求 url ===============`);
-            log(JSON.stringify(url));
-        }
-
-        $.get(url, async (error, response, data) => {
-            try {
-                if (debug) {
-                    log(
-                        `\n\n【debug】===============这是 上报任务 返回data==============`
-                    );
-                    log(data);
-                }
-
-                let result = JSON.parse(data);
-                if (result.code == 904) {
-                    refreshAu();
-                }
-                if (result.code == 902) {
-                    auback = 1;
-                    log(`AU失效，请重抓`);
-                    msg += `\nAU失效，请重抓`;
-                } else if (result.data.status === 1) {
-                    log(`上报任务成功`);
-                } else if (result.data.status == -2 || result.data.status == 2) {
-                    log(`上报任务失败，可能是已经完成`);
-                } else {
-                    log(`上报任务失败，原因是：${result.message}`);
-                }
-            } catch (e) {
-                log(e);
-            } finally {
-                resolve();
-            }
-        });
-    });
-}
-
-/**
- * 领取奖励
- */
-function getDrawPriz(num) {
-    let url = {
-        url: s(`http://api.xiaoyisz.com/qiehuang/ga/user/task/drawPrize?taskId=${taskIdArr[num]}`),
-        headers: {
-            Host: "api.xiaoyisz.com",
-            authorization: `${tyau}`,
-            "user-agent": `${ua}`,
-            "content-type": "application/json",
-        },
-    };
-    return new Promise((resolve) => {
-        if (debug) {
-            log(`\n【debug】=============== 这是 领取奖励 请求 url ===============`);
-            log(JSON.stringify(url));
-        }
-
-        $.get(url, async (error, response, data) => {
-            try {
-                if (debug) {
-                    log(
-                        `\n\n【debug】===============这是 领取奖励 返回data==============`
-                    );
-                    log(data);
-                }
-
-                let result = JSON.parse(data);
-                if (result.code == 904) {
-                    refreshAu();
-                }
-                if (result.code == 902) {
-                    auback = 1;
-                    log(`AU失效，请重抓`);
-                    msg += `\nAU失效，请重抓`;
-                } else if (result.code === 1000) {
-                    log(`任务不是待领取状态`);
-                } else if (result.code == 0) {
-                    let back = eval(result.data);
-                    log(`[${back.name}]任务领取奖励成功`);
-                } else {
-                    log(`任务领取奖励失败，原因是：${result.message}`);
-                }
-            } catch (e) {
-                log(e);
-            } finally {
-                resolve();
-            }
-        });
-    });
-}
 
 /**
  * 获取任务
  */
 function getTask(timeout = 2 * 1000) {
     let url = {
-        url: s(`http://api.xiaoyisz.com/qiehuang/ga/user/task/list`),
+        url: s(`http://api.xiaoyisz.com/qiehuang/ga/user/gift/list`),
         headers: {
             Host: "api.xiaoyisz.com",
             authorization: `${tyau}`,
@@ -501,18 +237,11 @@ function getTask(timeout = 2 * 1000) {
                     }
                     if (auback != 1 && result.code == 0) {
                         log(`获取任务列表成功`);
-                        for (let i = 0; i < 10; i++) {
-                            if (i == 0) {
-                                helpTaskId = back.data[i].taskId;
+                        result.data.forEach(function(v, i, a){
+                            if (v.id != '1525520477702881280' && v.id != '1525520477719658496' && v.leftStock > 0){
+                                msg += `\n账号[${name}]，商品名称：${v.name}，库存：${v.leftStock}`;
                             }
-                            taskType = back.data[i].taskType;
-                            taskTypeArr[i] = taskType;
-                            taskId = back.data[i].taskId;
-                            taskIdArr[i] = taskId;
-                            if (back.data[i].completeTimes != back.data[i].retryTimes) {
-                                taskBack[i] = 1;
-                            }
-                        }
+                        });
                     }
                 } catch (e) {
                     log(e);
