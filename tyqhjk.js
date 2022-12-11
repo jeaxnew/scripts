@@ -11,13 +11,13 @@
  抓包：api.xiaoyisz.com/qiehuang/ga/public/api/login  这个登录包里 body 部分的 全部
  变量：tybody='body@xxxx '  多个账号用 @ 或者 换行 分割
  定时一天三次，八个小时一次收取冒险奖励
- cron: 10 12,18 * * *
+ cron: * * * * *
 
  [task_local]
- #统一茄皇
- 10 12,18 * * *  https://raw.githubusercontent.com/jeaxnew/scripts/main/tyqh.js, tag=统一茄皇, enabled=true
+ #统一茄皇jk
+ * * * * *  https://raw.githubusercontent.com/jeaxnew/scripts/main/tyqhjk.js, tag=统一茄皇jk, enabled=true
  [rewrite_local]
- http://api.xiaoyisz.com/qiehuang/ga/public/api/login url script-request-header https://raw.githubusercontent.com/jeaxnew/scripts/main/tyqh.js
+ http://api.xiaoyisz.com/qiehuang/ga/public/api/login url script-request-header https://raw.githubusercontent.com/jeaxnew/scripts/main/tyqhjk.js
  [MITM]
  hostname = api.xiaoyisz.com
 
@@ -30,7 +30,7 @@
  2022-06-28 新增偷取好友阳光（出自jujuju大佬）
  */
 
-const $ = new Env("统一茄皇");
+const $ = new Env("统一茄皇jk");
 const notify = $.isNode() ? require("./sendNotify") : "";
 const { log } = console;
 const Notify = 1; //0为关闭通知，1为打开通知,默认为1
