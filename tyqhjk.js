@@ -971,7 +971,7 @@ function upgrade(timeout = 2 * 1000) {
 /**
  * 查询番茄余额
  */
-function (timeout = 2 * 1000) {
+function getTomato(timeout = 2 * 1000) {
     let url = {
         url: s(`http://api.xiaoyisz.com/qiehuang/ga/user/info?userId=-1`),
         headers: {
