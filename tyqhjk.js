@@ -153,7 +153,7 @@ let ua = User_Agents[uaNum];
 
                 if (auback != 1) {
                     log("【开始查询信息】");
-                    await ();
+                    await getUserInfo();
                     await $.wait(2 * 1000);
 
                     idArr[index] = id;
@@ -971,7 +971,7 @@ function upgrade(timeout = 2 * 1000) {
 /**
  * 查询番茄余额
  */
-function getTomato(timeout = 2 * 1000) {
+function (timeout = 2 * 1000) {
     let url = {
         url: s(`http://api.xiaoyisz.com/qiehuang/ga/user/info?userId=-1`),
         headers: {
